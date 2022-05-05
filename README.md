@@ -3,7 +3,7 @@ GENeSYS-MOD Turkey (Disaggregated at NUTS level 1, i.e., 12 regions)
 ---
 
 # INTRODUCTION
-This report summarizes the efforts on data collection for solar PV and wind time series (hourly capacity factors) data for Turkey.
+This report summarizes the efforts on data collection for solar PV and wind time series (hourly capacity factors) data for Turkey. In order to modify it for any EU region, see below, section "MODIFYING FOR ANY REGION". 
 
 We have employed [renewables.ninja](https://www.renewables.ninja/) website to collect wind and solar PV time series data. Different than most EU countries, there is no hourly solar PV or wind capacity factor data for Turkey in this website, nor it has any regional disaggregation at NUTS level 1 (12 regions) or 3 (81 cities). Only point data is available, which requires coordinates (in longitude and lattitude). 
 
@@ -64,10 +64,28 @@ labels <- sprintf("<strong>%s</strong>", nuts_EU_TR$NUTS_ID) %>% lapply(htmltool
                 fillOpacity = 0.7)) %>% 
   addCircles(data = nuts_EU_TR$geom2, fill = TRUE, stroke = TRUE, color = "#000", fillColor = "blue", radius = 1600, weight = 1, label = labels, labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "15px", direction = "auto"),)
 ```
-# WRITE COORDINATES (longitude and lattitude) TO CSV
+# WRITE COORDINATES (longitude and latitude) TO CSV
 ```{r}
-#st_write(nuts_EU_TR$geom2, "output_TR.csv", layer_options = "GEOMETRY=AS_XY")
+#st_write(nuts_EU_TR$geom2, "Lon_Lat_of_Centroids_TR_NUTS1and3_levels.csv", layer_options = "GEOMETRY=AS_XY")
 ```
+
+# MODIFYING FOR ANY REGION
+* In order to modify this time series data for any region:
+1. Choose %YOUR REGION% in above code and run it to retrieve the centroids for all NUTS levels for your region.
+```{r}
+nuts_EU_centers_TR <-  nuts_EU$geom2 %>% filter(grepl('%YOUR REGION%', NUTS_ID))
+```
+2. Enter your own token value in get_TR_TS_wind_solar.R file in line 26:
+```{r}
+token = '!YOUR TOKEN HERE!'
+```
+3. Modify the get_TR_TS_wind_solar.R line 64, according to your %NUTS_LEVEL% and %NO_OF_ROWS%"
+```{r}
+coordinates_TR <- coordinates %>% select(X,Y,NUTS_ID,LEVL_CODE) %>% filter(LEVL_CODE==%NUTS_LEVEL%) %>% filter(row_number() %in% 1:%NO_OF_ROWS%) #FILTER FIRST %NO_OF_ROWS% DO NOT EXCEED 40 or 50 points at a time!
+```
+4. Run get_TR_TS_wind_solar.R to retrieve wind and PV time series.
+
+
 # A NOTE ON RENEWABLES.NINJA WEBSITE and DATA GATHERING
 * We have used ninja_automator.r that is available at [Github](https://github.com/renewables-ninja/ninja_automator) and used the coordinates of centroids of polygons for NUTS level 1 and 3 to gather these data from renewables.ninja website (the Github page of ninja.renewables have the necessary information, but there is a hourly data gathering limit of 50 querries,i.e., 50 points at once).
 
@@ -101,10 +119,10 @@ labels <- sprintf("<strong>%s</strong>", nuts_EU_TR$NUTS_ID) %>% lapply(htmltool
 * Then single offshore points for these locations are selected from the renewables.ninja website wind capacity factors are downloaded. These factors are then averaged for each TR NUTS level 1 region.
 
 # FINAL REMARKS
-These efforts, however, does not complete the hourly onshore wind, offshore wind and PV time series data required for GENeSYS-MOD. We also need 3 sub-technologies for each of these hourly datasets (the values in parantheses shows the multipliers for capacity factors we have used for each sub technology) 
+These efforts, however, does not complete the hourly onshore wind, offshore wind and PV time series data required for GENeSYS-MOD. We also need 3 sub-technologies for each of these hourly datasets (the values in parentheses shows the multipliers for capacity factors we have used for each sub technology) 
 
   * **PV:** inf (0.70), avg (0.85) opt or base (1)
   * **WINDONSHORE:** inf (0.70), avg or base (1), opt (0.85)
   * **WINDOFFSHORE:** shallow (0.85), deep (0.70) and base or wind_offshore (1)
 
-* Moreover, there are other factors that needs to be considered, however, we have no data sources for Hydro dispatchable nor for Hydro (RoR) capacity factors at NUTS Level 1 disaggregation. Moreoever, load data is also available at NUTS Level 0. Therefore, we have used the TR data currently available in GENeSYS-MOD database for NUTS Level 0.
+* Moreover, there are other factors that needs to be considered, however, we have no data sources for Hydro dispatchable nor for Hydro (RoR) capacity factors at NUTS Level 1 disaggregation. Furthermore, load data is also available at NUTS Level 0. Therefore, we have used the TR data currently available in GENeSYS-MOD database for NUTS Level 0.
