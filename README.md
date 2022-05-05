@@ -3,7 +3,7 @@ GENeSYS-MOD Turkey (Disaggregated at NUTS level 1, i.e., 12 regions)
 ---
 
 # INTRODUCTION
-This report summarizes the efforts on data collection for solar PV and wind time series (hourly capacity factors) data for Turkey. In order to modify it for any EU region, see below, section "MODIFYING FOR ANY REGION". 
+This report summarizes the efforts on data collection for solar PV and wind time series (hourly capacity factors) data for Turkey. In order to modify it for any EU region, see below, section *"MODIFYING FOR ANY REGION"*. 
 
 We have employed [renewables.ninja](https://www.renewables.ninja/) website to collect wind and solar PV time series data. Different than most EU countries, there is no hourly solar PV or wind capacity factor data for Turkey in this website, nor it has any regional disaggregation at NUTS level 1 (12 regions) or 3 (81 cities). Only point data is available, which requires coordinates (in longitude and lattitude). 
 
