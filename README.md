@@ -3,6 +3,23 @@ GENeSYS-MOD Turkey (Disaggregated at NUTS level 1, i.e., 12 regions)
 ---
 
 # INTRODUCTION
+GENeSYS-MOD-Turkey is a version of the pan-EU GENeSYS-MOD v3.1, but includes updates for Turkish energy data from various sources. Detailed energy data for Turkey is available in the model:
+*  Gas storage capacity of Turkey (from Petroleum Pipeline Corporation (BOTAS))
+*   Hourly generation profiles, hourly load profiles (available in current GENeSYS-MOD v3.1 database)
+*  Energy demand (updated for Turkey model from Ministry of Energy and Natural Resources)
+*  Transportation data (from several sources, such as statistics from Ministry of Transport and Infrastructure, Ministry of Environment, Urbanisation and Climate Change)
+*  Installed capacities and generation/production mix per technology and sector (from the transparency platform of Energy Exchange Istanbul (EXIST))
+*  Energy balances (from Ministry of Energy and Natural Resources)
+*  Emissions (from UNFCC, Turkey, 2022 National Inventory Report (NIR))
+*  Generation/production costs (available in current GENeSYS-MOD v3.1 database)
+*  Maximum storage capacities
+*  Minimum storage requirements (assumed as 10% overall storage capacity)
+*  Seasonal variations in natural gas imports (specifically between December & March, based on monthly variations)
+*  197-hour steps for all scenarios
+
+The details about the data sources and calculations can be found in GENeSYS-MOD-Turkey GitHub page.
+
+# MODIFICATIONS FOR TURKISH ENERGY MODEL
 This report summarizes the efforts on data collection for solar PV and wind time series (hourly capacity factors) data for Turkey. In order to modify it for any EU region, see below, section **MODIFYING FOR ANY REGION**. 
 
 We have employed [renewables.ninja](https://www.renewables.ninja/) website to collect wind and solar PV time series data. Different than most EU countries, there is no hourly solar PV or wind capacity factor data for Turkey in this website, nor it has any regional disaggregation at NUTS level 1 (12 regions) or 3 (81 cities). Only point data is available, which requires coordinates (in longitude and lattitude). 
