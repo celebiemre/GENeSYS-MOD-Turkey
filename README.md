@@ -1,5 +1,5 @@
 # GENeSYS-MOD-Turkey
-GENeSYS-MOD Turkey (Disaggregated at NUTS level 1, i.e., 12 regions)
+GENeSYS-MOD Turkey (Both aggregated at NUTS level 0 and disaggregated at NUTS level 1, i.e., 12 regions)
 ---
 
 # INTRODUCTION
