@@ -31,7 +31,7 @@ $onuelxref
 scalar starttime;
 starttime = jnow;
 
-$if not set year                         $setglobal year 2018
+$if not set year                         $setglobal year 2015
 
 $if not set switch_unixPath              $setglobal switch_unixPath 0
 $if not set switch_investLimit           $setglobal switch_investLimit 1
@@ -42,14 +42,14 @@ $if not set switch_all_regions           $setglobal switch_all_regions 1
 $if not set switch_infeasibility_tech    $setglobal switch_infeasibility_tech 0
 $if not set switch_base_year_bounds      $setglobal switch_base_year_bounds 1
 $if not set switch_only_load_gdx         $setglobal switch_only_load_gdx 0
-$if not set switch_write_output          $setglobal switch_write_output xls
+$if not set switch_write_output          $setglobal switch_write_output gdx
 $if not set switch_aggregate_region      $setglobal switch_aggregate_region 0
 $if not set switch_intertemporal         $setglobal switch_intertemporal 0
 $if not set switch_weighted_emissions    $setglobal switch_weighted_emissions 1
 $if not set switch_employment_calculation $setglobal switch_employment_calculation 0
 $if not set switch_test_data_load        $setglobal switch_test_data_load 0
 $if not set switch_only_write_results    $setglobal switch_only_write_results 0
-$if not set switch_symmetric_transmission $setglobal switch_symmetric_transmission 1
+$if not set switch_symmetric_transmission $setglobal switch_symmetric_transmission 0.85
 
 
 $if not set switch_peaking_capacity      $setglobal switch_peaking_capacity 1
@@ -59,26 +59,27 @@ $if not set switch_peaking_minrun        $setglobal switch_peaking_minrun 1
 $if not set set_peaking_slack            $setglobal set_peaking_slack 1.0
 *consider vRES only partially (1.0 consider vRES fully, 0.0 ignore vRES in peaking equation)
 $if not set set_peaking_res_cf           $setglobal set_peaking_res_cf 0.5
+$if not set set_peaking_min_thermal      $setglobal set_peaking_min_thermal 0.5
 $if not set set_peaking_startyear        $setglobal set_peaking_startyear 2025
 $if not set set_peaking_minrun_share     $setglobal set_peaking_minrun_share 0.15
 
 
-$if not set solver                       $setglobal solver gurobi
-$if not set model_region                 $setglobal model_region europe
-$if not set data_base_region             $setglobal data_base_region DE
-$if not set global_data_file             $setglobal global_data_file Global_Data_v12_oE_kl_12_04_2022
-$if not set data_file                    $setglobal data_file Data_Europe_openENTRANCE_DirectedTransition_oE_v28_kl_15_03_2022
+$if not set solver                       $setglobal solver cplex
+$if not set model_region                 $setglobal model_region middleearth
+$if not set data_base_region             $setglobal data_base_region Gondor
+$if not set global_data_file             $setglobal global_data_file Global_Data_v13_oE_kl_26_04_2022
+$if not set data_file                    $setglobal data_file Data_MiddleEarth_v02
 $if not set eployment_data_file          $setglobal employment_data_file Employment_v01_06_11_2019
-$if not set hourly_data_file             $setglobal hourly_data_file Hourly_Data_Europe_v11_kl_04_04_2022
-$if not set threads                      $setglobal threads 4
+$if not set hourly_data_file             $setglobal hourly_data_file Hourly_Data_MiddleEarth_v01
+$if not set threads                      $setglobal threads 6
 $if not set timeseries                   $setglobal timeseries elmod
-$if not set elmod_nthhour                $setglobal elmod_nthhour 73
+$if not set elmod_nthhour                $setglobal elmod_nthhour 484
 $if not set elmod_starthour              $setglobal elmod_starthour 8
 $if not set elmod_dunkelflaute           $setglobal elmod_dunkelflaute 0
 $if not set elmod_hour_steps             $setglobal elmod_hour_steps 4
 
 
-$if not set emissionPathway              $setglobal emissionPathway DirectedTransition
+$if not set emissionPathway              $setglobal emissionPathway MiddleEarth
 $if not set emissionScenario             $setglobal emissionScenario globalLimit
 
 $if not set socialdiscountrate           $setglobal socialdiscountrate 0.05
@@ -95,15 +96,7 @@ $if not set tempdir                      $setglobal tempdir TempFiles\
 $if not set resultdir                    $setglobal resultdir Results\
 $endif
 
-option dnlp = conopt;
-
-***
-*** Here, the data files for various pathway runs are defined
-***
-$if %emissionPathway% == "SocietalCommitment" $setglobal data_file Data_Europe_openENTRANCE_SocietalCommitment_oE_v38_kl_05_04_2022
-$if %emissionPathway% == "TechnoFriendly" $setglobal data_file Data_Europe_openENTRANCE_technoFriendly_oE_v50_kl_05_04_2022
-$if %emissionPathway% == "DirectedTransition" $setglobal data_file Data_Europe_openENTRANCE_DirectedTransition_oE_v36_kl_05_04_2022
-$if %emissionPathway% == "GradualDevelopment" $setglobal data_file Data_Europe_openENTRANCE_GradualDevelopment_oE_v38_kl_05_04_2022
+option dnlp = ipopt;
 
 *
 * ####### Declarations #############
@@ -217,25 +210,6 @@ display "emissionPathway = %emissionPathway%";
 
 display "info = %info%";
 
-************SET EMISSIONSPENALTY for 2018 and 2020 values and so on*************
-*EmissionsPenalty(rr_full,e,yy_full)$=30.000;
-*EmissionsPenalty(rr_full,e,yy_full)$(ord(yy_full)=1)=15.060
-********************************************************************************
-
-************SET CAPACITYFACTOR for Z_Import_Gas to*************
-************0.5 for WINTER hours (for months, Dec, Jan, Feb AND for years 2025 to 2050*************
-***v01
-*CapacityFactor("TR","Z_Import_Gas",TIMESLICE,y)$[[(ord(TIMESLICE) le 2) OR (ord(TIMESLICE)=12)] AND (ord(y)>1)]=0.5;
-***v02
-*TotalAnnualMaxCapacity("TR","Z_Import_Gas",y)$[(ord(y)>1)] = 2000;
-***v03  (no v01 and v02) %for months Dec, Jan, Feb and March 2018
-RateOfActivity.UP(y,l,"Z_Import_Gas",m,"TR")$[[(ord(l) le 3*(ceil(8760/%elmod_nthhour%)/12)) OR (ord(l) gt 11*(ceil(8760/%elmod_nthhour%)/12))] AND (ord(y)>1)]=2000;
-***v04  (no v01 and v02) %for months months Dec, Jan, Feb and March 2025 to 2050
-RateOfActivity.UP(y,l,"Z_Import_Gas",m,"TR")$[[(ord(l) le 3*(ceil(8760/%elmod_nthhour%)/12)) OR (ord(l) gt 11*(ceil(8760/%elmod_nthhour%)/12))] AND (ord(y)>2)]=RateOfActivity.UP(y-1,l,"Z_Import_Gas",m,"TR")*0.5;
-RateOfActivity.UP(y,l,"Z_Import_Gas",m,"TR")$[[(ord(l) le 3*(ceil(8760/%elmod_nthhour%)/12)) OR (ord(l) gt 11*(ceil(8760/%elmod_nthhour%)/12))] AND (ord(y)>3)]=RateOfActivity.UP(y-1,l,"Z_Import_Gas",m,"TR")*0.5;
-
-***NO H2 IMPORTS from Non-EU
-RateOfActivity.fx(y,l,"Z_Import_H2",m,"TR")=0;
 *
 * ####### Model and Solve statements #############
 *
@@ -253,11 +227,6 @@ $endif
 
 genesys.holdfixed = 1;
 genesys.optfile = 1;
-
-***savepoint
-option Savepoint=2;
-*USE method 3 or 5 in Gurobi options for WARM-START (concurrent optimizer, first method finding a solution will be returned)
-*Execute_Loadpoint 'genesys_p1_SOLVED.gdx';
 
 scalar heapSizeBeforSolve;
 heapSizeBeforSolve = heapSize;
