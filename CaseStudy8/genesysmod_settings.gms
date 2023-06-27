@@ -29,54 +29,19 @@
 
 * ################### CHOOSE CALCULATED YEARS ###################
 ***  TO LEAVE OUT A CERTAIN YEAR, REMOVE COMMENT OF RESPECTIVE LINE ***
-y('2015') = no;
+*y('2015') = no;
 *y('2017') = no;
 *y('2018') = no;
 *y('2022') = no;
 *y('2015') = no;
 *y('2018') = no;
-y('2020') = no;
+*y('2020') = no;
 *y('2025') = no;
 *y('2030') = no;
-*y('2035') = no;
+y('2035') = no;
 *y('2040') = no;
-*y('2045') = no;
+y('2045') = no;
 *y('2050') = no;
-
-* ################### CHOOSE REGIONS ###################
-
-*** EXCLUDE TR REGION to use DISAGGREGATED MODEL ***
-*r('TR')=no;
-
-*** EXCLUDE TR1-TRC REGION to use AGGREGATED MODEL ***
-*r('TR1')=no;
-*r('TR2')=no;
-*r('TR3')=no;
-*r('TR4')=no;
-*r('TR5')=no;
-*r('TR6')=no;
-*r('TR7')=no;
-*r('TR8')=no;
-*r('TR9')=no;
-*r('TRA')=no;
-*r('TRB')=no;
-*r('TRC')=no;
-
-*** EXCLUDE ALL REGIONS EXCEPT TR (TR1-TRC later)
-r(r_full)=no;
-r('TR')=yes;
-*r('TR1')=yes;
-*r('TR2')=yes;
-*r('TR3')=yes;
-*r('TR4')=yes;
-*r('TR5')=yes;
-*r('TR6')=yes;
-*r('TR7')=yes;
-*r('TR8')=yes;
-*r('TR9')=yes;
-*r('TRA')=yes;
-*r('TRB')=yes;
-*r('TRC')=yes;
 
 * ################### OTHER GENERAL INPUTS ###################
 
@@ -103,5 +68,6 @@ scalar Trajectory2020UpperLimit /3/;
 scalar Trajectory2020LowerLimit /0.7/;
 GrowthRateTradeCapacity(y,'Power',r,rr) = 0.1;
 
-BaseYearSlack(f) = 0.035;
-BaseYearSlack('Power') = 0.035;
+BaseYearSlack(f) = 0.05;
+BaseYearSlack('Power') = 0.05;
+BaseYearSlack('Heat_Low_Residential') = 0.05;
